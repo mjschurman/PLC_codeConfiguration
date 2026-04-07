@@ -1,0 +1,68 @@
+# This is an example of a TOML configuration file for a arduino baesed PLC using MODBUS
+title = "Arduino PLC Configuration Example"
+version = "1.0"
+target = "arduino mega 2560" # specify the target PLC model
+
+[modbus]
+type = "IP" # options are IP or Serial
+ip_address = "10.1.10.101" # ignore or not needed if type is Serial
+port = 502 # ignore or not needed if type is Serial
+slave_id = 1    # The slave ID of the PLC, used for addressing in MODBUS communication
+
+[registers]
+
+coils = [
+    {register = 1, pin = "D2", description = "DO1"},
+    {register = 2, pin = "D3", description = "DO2"},
+    {register = 3, pin = "D4", description = "DO3"},
+    {register = 4, pin = "D5", description = "DO4"},
+    {register = 5, pin = "D6", description = "DO5"},
+    {register = 6, pin = "D7", description = "DO6"},
+    {register = 7, pin = "D8", description = "DO7"},
+]
+
+discrete_inputs = [
+    {register = 101, pin = "D22", description = "DI1"},
+    {register = 102, pin = "D23", description = "DI2"},
+    {register = 103, pin = "D24", description = "DI3"},
+    {register = 104, pin = "D25", description = "DI4"},
+    {register = 105, pin = "D26", description = "DI5"},
+    {register = 106, pin = "D27", description = "DI6"},
+    {register = 107, pin = "D28", description = "DI7"},
+]
+
+input_registers = [
+    {register = 201, pin = "A0", description = "AI1"},
+    {register = 202, pin = "A1", description = "AI2"},
+    {register = 203, pin = "A2", description = "AI3"},
+    {register = 204, pin = "A3", description = "AI4"},
+    {register = 205, pin = "A4", description = "AI5"},
+    {register = 206, pin = "A5", description = "AI6"},
+    {register = 207, pin = "A6", description = "AI7"},
+]
+
+holding_registers = [
+    {register = 301, pin = "D9", description = "AO1", range = [0, 255]},
+    {register = 302, pin = "D10", description = "AO2", range = [0, 255]},
+    {register = 303, pin = "D11", description = "AO3", range = [0, 255]},
+    {register = 304, pin = "D12", description = "AO4", range = [0, 255]},
+    {register = 305, pin = "D13", description = "AO5", range = [0, 255]},
+]
+
+genRegs = [
+    {register = 350, description = "General Purpose Register 1", range = [0, 100]},
+    {register = 351, description = "General Purpose Register 2", range = [0, 100]},
+    {register = 352, description = "General Purpose Register 3", range = [0, 100]},
+    {register = 353, description = "General Purpose Register 4", range = [0, 100]},
+    {register = 354, description = "General Purpose Register 5", range = [0, 100]},
+] # gen regs are regs that are not connected to pins and can be read or written to, 
+# these are HOLDING REGISTERS but they can be used for any purpose, they are just not connected to any pins
+
+genFlags = [
+    {register = 50, description = "General Purpose Flag 1"},
+    {register = 51, description = "General Purpose Flag 2"},
+    {register = 52, description = "General Purpose Flag 3"},
+    {register = 53, description = "General Purpose Flag 4"},
+    {register = 54, description = "General Purpose Flag 5"},
+] # gen flags are flags that are not connected to pins and can be read or written to, 
+# these are COILS but they can be used for any purpose, they are just not connected to any pins
