@@ -16,7 +16,7 @@ const int      COIL_PINS[] = { 2, 3, 4, 5, 6, 7, 8 };
 const uint8_t  COIL_COUNT  = sizeof(COIL_REGS) / sizeof(COIL_REGS[0]);
 
 // General purpose flag registers (Coils, no pin)
-const uint16_t FLAG_REGS[] = { FLAG_GENERAL_PURPOSE_FLAG_1, FLAG_GENERAL_PURPOSE_FLAG_2, FLAG_GENERAL_PURPOSE_FLAG_3, FLAG_GENERAL_PURPOSE_FLAG_4, FLAG_GENERAL_PURPOSE_FLAG_5 };
+const uint16_t FLAG_REGS[] = { FLAG_SYSTEM_FAULT_FLAG, FLAG_INVALID_REGISTER_VALUE_FLAG, FLAG_GENERAL_PURPOSE_FLAG_3, FLAG_GENERAL_PURPOSE_FLAG_4, FLAG_GENERAL_PURPOSE_FLAG_5 };
 const uint8_t  FLAG_COUNT  = sizeof(FLAG_REGS) / sizeof(FLAG_REGS[0]);
 
 // Discrete input registers and pins (Digital Inputs)

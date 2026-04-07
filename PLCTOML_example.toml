@@ -59,8 +59,8 @@ genRegs = [
 # these are HOLDING REGISTERS but they can be used for any purpose, they are just not connected to any pins
 
 genFlags = [
-    {register = 50, description = "General Purpose Flag 1"},
-    {register = 51, description = "General Purpose Flag 2"},
+    {register = 50, description = "System Fault Flag"},
+    {register = 51, description = "Invalid Register Value Flag"},
     {register = 52, description = "General Purpose Flag 3"},
     {register = 53, description = "General Purpose Flag 4"},
     {register = 54, description = "General Purpose Flag 5"},

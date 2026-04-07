@@ -123,6 +123,45 @@ def validate_toml(config: dict) -> None:
 # Header file generation
 # ---------------------------------------------------------------------------
 
+def generate_register_table(registers: dict) -> list[str]:
+    """Return a formatted comment block listing all registers in a table."""
+    sections = [
+        ('coils',             'Coil (DO)'),
+        ('discrete_inputs',   'Discrete In (DI)'),
+        ('input_registers',   'Input Reg (AI)'),
+        ('holding_registers', 'Holding Reg (AO)'),
+        ('genRegs',           'General Reg'),
+        ('genFlags',          'General Flag'),
+    ]
+
+    rows = []
+    for key, type_label in sections:
+        for entry in registers.get(key, []):
+            pin = entry.get('pin', '-')
+            r = entry.get('range')
+            rng = f"[{r[0]}, {r[1]}]" if r else '-'
+            rows.append((entry['register'], type_label, pin, entry['description'], rng))
+
+    if not rows:
+        return []
+
+    # Column widths
+    w_reg  = max(len('Register'),    max(len(str(r[0])) for r in rows))
+    w_type = max(len('Type'),        max(len(r[1]) for r in rows))
+    w_pin  = max(len('Pin'),         max(len(r[2]) for r in rows))
+    w_desc = max(len('Description'), max(len(r[3]) for r in rows))
+    w_rng  = max(len('Range'),       max(len(r[4]) for r in rows))
+
+    sep = f"// +{'-'*(w_reg+2)}+{'-'*(w_type+2)}+{'-'*(w_pin+2)}+{'-'*(w_desc+2)}+{'-'*(w_rng+2)}+"
+    hdr = f"// | {'Register':<{w_reg}} | {'Type':<{w_type}} | {'Pin':<{w_pin}} | {'Description':<{w_desc}} | {'Range':<{w_rng}} |"
+
+    lines = [sep, hdr, sep]
+    for reg, typ, pin, desc, rng in sorted(rows, key=lambda r: r[0]):
+        lines.append(f"// | {reg:<{w_reg}} | {typ:<{w_type}} | {pin:<{w_pin}} | {desc:<{w_desc}} | {rng:<{w_rng}} |")
+    lines.append(sep)
+    return lines
+
+
 def generate_header(config: dict) -> str:
     modbus = config['modbus']
     registers = config['registers']
@@ -134,6 +173,9 @@ def generate_header(config: dict) -> str:
     out.append(f'// Title  : {config["title"]}')
     out.append(f'// Version: {config["version"]}')
     out.append(f'// Target : {config["target"]}')
+    out.append('')
+    out.append('// Register Map')
+    out.extend(generate_register_table(registers))
     out.append('')
 
     if modbus['type'] == 'IP':

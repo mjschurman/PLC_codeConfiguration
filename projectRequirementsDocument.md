@@ -20,7 +20,7 @@ For arduino the modbus functionality shall be handled by the library: emelianov/
 
 1) parses the TOML file and ensures the format is correct
 2) After parsing, generates an arduino .ccp file for platformIO that builds all the registers, brings in all libraries, etc.
-3) creates a .h file that has all of the modbus definitions required by the arduino library
+3) creates a .h file that has all of the modbus definitions required by the arduino library.  This file should also have a table (as a comment) that has the following headings: register#, type, pin, description, and Range. Values taken from toml file.
 4) Configures digital pins as input or output as required by TOML file
 
 ### Arduino patterns to use
