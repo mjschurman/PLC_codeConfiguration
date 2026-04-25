@@ -29,6 +29,8 @@ For arduino the modbus functionality shall be handled by the library: emelianov/
 * put the pins in arrays
 * when pin directions are defined do it in a loop
 * when registers are used, do it in a loop
+* Create seperate functions for the 6 types of registers that are called in the mainloop that UPDATE the registers.
+* Start out with very simple update functions.  These can be modified by the user later withj more comples logic or functionality later.
 
 ### Register Value Validation
 

@@ -12,23 +12,23 @@ slave_id = 1    # The slave ID of the PLC, used for addressing in MODBUS communi
 [registers]
 
 coils = [
-    {register = 1, pin = "D2", description = "DO1"},
-    {register = 2, pin = "D3", description = "DO2"},
-    {register = 3, pin = "D4", description = "DO3"},
-    {register = 4, pin = "D5", description = "DO4"},
-    {register = 5, pin = "D6", description = "DO5"},
-    {register = 6, pin = "D7", description = "DO6"},
-    {register = 7, pin = "D8", description = "DO7"},
+    {register = 1, pin = "2", description = "DO1"},
+    {register = 2, pin = "3", description = "DO2"},
+    {register = 3, pin = "4", description = "DO3"},
+    {register = 4, pin = "5", description = "DO4"},
+    {register = 5, pin = "6", description = "DO5"},
+    {register = 6, pin = "7", description = "DO6"},
+    {register = 7, pin = "8", description = "DO7"},
 ]
 
 discrete_inputs = [
-    {register = 101, pin = "D22", description = "DI1"},
-    {register = 102, pin = "D23", description = "DI2"},
-    {register = 103, pin = "D24", description = "DI3"},
-    {register = 104, pin = "D25", description = "DI4"},
-    {register = 105, pin = "D26", description = "DI5"},
-    {register = 106, pin = "D27", description = "DI6"},
-    {register = 107, pin = "D28", description = "DI7"},
+    {register = 101, pin = "22", description = "DI1"},
+    {register = 102, pin = "23", description = "DI2"},
+    {register = 103, pin = "24", description = "DI3"},
+    {register = 104, pin = "25", description = "DI4"},
+    {register = 105, pin = "26", description = "DI5"},
+    {register = 106, pin = "27", description = "DI6"},
+    {register = 107, pin = "28", description = "DI7"},
 ]
 
 input_registers = [
@@ -42,11 +42,11 @@ input_registers = [
 ]
 
 holding_registers = [
-    {register = 301, pin = "D9", description = "AO1", range = [0, 255]},
-    {register = 302, pin = "D10", description = "AO2", range = [0, 255]},
-    {register = 303, pin = "D11", description = "AO3", range = [0, 255]},
-    {register = 304, pin = "D12", description = "AO4", range = [0, 255]},
-    {register = 305, pin = "D13", description = "AO5", range = [0, 255]},
+    {register = 301, pin = "9",  description = "AO1", range = [0, 255]},
+    {register = 302, pin = "10", description = "AO2", range = [0, 255]},
+    {register = 303, pin = "11", description = "AO3", range = [0, 255]},
+    {register = 304, pin = "12", description = "AO4", range = [0, 255]},
+    {register = 305, pin = "13", description = "AO5", range = [0, 255]},
 ]
 
 genRegs = [

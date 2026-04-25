@@ -21,26 +21,16 @@ from pathlib import Path
 # ---------------------------------------------------------------------------
 
 def parse_pin(pin_str: str) -> str:
-    """Convert 'D2' -> '2', 'A0' -> 'A0' for use in Arduino code."""
-    if pin_str.startswith('D'):
-        numeric = pin_str[1:]
-        if not numeric.isdigit():
-            raise ValueError(f"Invalid digital pin: {pin_str!r}")
-        return numeric
-    elif pin_str.startswith('A'):
-        suffix = pin_str[1:]
-        if not suffix.isdigit():
-            raise ValueError(f"Invalid analog pin: {pin_str!r}")
-        return pin_str  # keep 'A0', 'A1', etc. — Arduino understands these
-    else:
-        raise ValueError(f"Unknown pin format: {pin_str!r}. Expected 'D<n>' or 'A<n>'.")
+    """Return the pin token to emit in the generated C++, verbatim.
 
-
-def make_define(description: str, prefix: str) -> str:
-    """Turn a description string into a safe C macro name with a prefix."""
-    clean = description.upper().replace(' ', '_').replace('-', '_')
-    clean = ''.join(c for c in clean if c.isalnum() or c == '_')
-    return f"{prefix}_{clean}"
+    No transformation, no format check — whatever string the TOML provides
+    ('2', 'A0', 'PD1', 'PORTB7', a board-specific macro, etc.) is forwarded
+    as-is. The C++ compiler validates that the symbol resolves for the
+    chosen target. Only an empty/non-string value is rejected here.
+    """
+    if not isinstance(pin_str, str) or not pin_str:
+        raise ValueError(f"Invalid pin: {pin_str!r} (must be a non-empty string)")
+    return pin_str
 
 
 # ---------------------------------------------------------------------------
@@ -206,10 +196,10 @@ def generate_header(config: dict) -> str:
         entries = registers.get(key)
         if not entries:
             continue
+        addrs = ', '.join(str(e['register']) for e in entries)
         out.append(f'// {comment}')
-        for entry in entries:
-            name = make_define(entry['description'], prefix)
-            out.append(f'#define {name:<40} {entry["register"]}')
+        out.append(f'const int     {prefix}_REGS[] = {{ {addrs} }};')
+        out.append(f'const uint8_t {prefix}_COUNT  = sizeof({prefix}_REGS) / sizeof({prefix}_REGS[0]);')
         out.append('')
 
     return '\n'.join(out)
@@ -252,47 +242,33 @@ def generate_cpp(config: dict) -> str:
     out.append('')
 
     # ---- Global arrays -----------------------------------------------------
-    def reg_array(entries, prefix):
-        return ', '.join(make_define(e['description'], prefix) for e in entries)
+    # Register address arrays (COIL_REGS, DI_REGS, AI_REGS, AO_REGS, GENREG_REGS,
+    # FLAG_REGS) and their *_COUNT constants are declared in plc_config.h.
 
     def pin_array(entries):
         return ', '.join(parse_pin(e['pin']) for e in entries)
 
     if coils:
-        out.append('// Coil registers and pins (Digital Outputs)')
-        out.append(f'const uint16_t COIL_REGS[] = {{ {reg_array(coils, "COIL")} }};')
-        out.append(f'const int      COIL_PINS[] = {{ {pin_array(coils)} }};')
-        out.append(f'const uint8_t  COIL_COUNT  = sizeof(COIL_REGS) / sizeof(COIL_REGS[0]);')
-        out.append('')
-
-    if gen_flags:
-        out.append('// General purpose flag registers (Coils, no pin)')
-        out.append(f'const uint16_t FLAG_REGS[] = {{ {reg_array(gen_flags, "FLAG")} }};')
-        out.append(f'const uint8_t  FLAG_COUNT  = sizeof(FLAG_REGS) / sizeof(FLAG_REGS[0]);')
+        out.append('// Coil pins (Digital Outputs)')
+        out.append(f'const int COIL_PINS[] = {{ {pin_array(coils)} }};')
         out.append('')
 
     if dis_inputs:
-        out.append('// Discrete input registers and pins (Digital Inputs)')
-        out.append(f'const uint16_t DI_REGS[] = {{ {reg_array(dis_inputs, "DI")} }};')
-        out.append(f'const int      DI_PINS[] = {{ {pin_array(dis_inputs)} }};')
-        out.append(f'const uint8_t  DI_COUNT  = sizeof(DI_REGS) / sizeof(DI_REGS[0]);')
+        out.append('// Discrete input pins (Digital Inputs)')
+        out.append(f'const int DI_PINS[] = {{ {pin_array(dis_inputs)} }};')
         out.append('')
 
     if inp_regs:
-        out.append('// Input registers and pins (Analog Inputs)')
-        out.append(f'const uint16_t AI_REGS[] = {{ {reg_array(inp_regs, "AI")} }};')
-        out.append(f'const int      AI_PINS[] = {{ {pin_array(inp_regs)} }};')
-        out.append(f'const uint8_t  AI_COUNT  = sizeof(AI_REGS) / sizeof(AI_REGS[0]);')
+        out.append('// Input register pins (Analog Inputs)')
+        out.append(f'const int AI_PINS[] = {{ {pin_array(inp_regs)} }};')
         out.append('')
 
     if hold_regs:
         ao_min = ', '.join(str(e['range'][0]) for e in hold_regs)
         ao_max = ', '.join(str(e['range'][1]) for e in hold_regs)
         ao_init = ', '.join(str(e['range'][0]) for e in hold_regs)
-        out.append('// Holding registers and pins (Analog Outputs / PWM)')
-        out.append(f'const uint16_t AO_REGS[]      = {{ {reg_array(hold_regs, "AO")} }};')
+        out.append('// Holding register pins and validation ranges (Analog Outputs / PWM)')
         out.append(f'const int      AO_PINS[]      = {{ {pin_array(hold_regs)} }};')
-        out.append(f'const uint8_t  AO_COUNT       = sizeof(AO_REGS) / sizeof(AO_REGS[0]);')
         out.append(f'const uint16_t AO_MIN[]       = {{ {ao_min} }};')
         out.append(f'const uint16_t AO_MAX[]       = {{ {ao_max} }};')
         out.append(f'uint16_t       aoLastValid[]  = {{ {ao_init} }};')
@@ -302,9 +278,7 @@ def generate_cpp(config: dict) -> str:
         gr_min = ', '.join(str(e['range'][0]) for e in gen_regs)
         gr_max = ', '.join(str(e['range'][1]) for e in gen_regs)
         gr_init = ', '.join(str(e['range'][0]) for e in gen_regs)
-        out.append('// General purpose holding registers (no pin)')
-        out.append(f'const uint16_t GENREG_REGS[]       = {{ {reg_array(gen_regs, "GENREG")} }};')
-        out.append(f'const uint8_t  GENREG_COUNT        = sizeof(GENREG_REGS) / sizeof(GENREG_REGS[0]);')
+        out.append('// General purpose holding register validation ranges (no pin)')
         out.append(f'const uint16_t GENREG_MIN[]        = {{ {gr_min} }};')
         out.append(f'const uint16_t GENREG_MAX[]        = {{ {gr_max} }};')
         out.append(f'uint16_t       genRegLastValid[]   = {{ {gr_init} }};')
@@ -372,64 +346,86 @@ def generate_cpp(config: dict) -> str:
     out.append('}')
     out.append('')
 
-    # ---- loop() ------------------------------------------------------------
-    out.append('void loop() {')
-    out.append('    mb.task();  // handle incoming MODBUS requests')
-    out.append('')
-
-    if hold_regs or gen_regs:
-        out.append('    // Validate register values; revert and set invalid flag (reg 51) if out of range')
-        if hold_regs:
-            out.append('    for (uint8_t i = 0; i < AO_COUNT; i++) {')
-            out.append('        uint16_t val = mb.Hreg(AO_REGS[i]);')
-            out.append('        if (val < AO_MIN[i] || val > AO_MAX[i]) {')
-            out.append('            mb.Hreg(AO_REGS[i], aoLastValid[i]);')
-            out.append('            mb.Coil(51, true);  // Register Value Invalid Flag')
-            out.append('        } else {')
-            out.append('            aoLastValid[i] = val;')
-            out.append('        }')
-            out.append('    }')
-        if gen_regs:
-            out.append('    for (uint8_t i = 0; i < GENREG_COUNT; i++) {')
-            out.append('        uint16_t val = mb.Hreg(GENREG_REGS[i]);')
-            out.append('        if (val < GENREG_MIN[i] || val > GENREG_MAX[i]) {')
-            out.append('            mb.Hreg(GENREG_REGS[i], genRegLastValid[i]);')
-            out.append('            mb.Coil(51, true);  // Register Value Invalid Flag')
-            out.append('        } else {')
-            out.append('            genRegLastValid[i] = val;')
-            out.append('        }')
-            out.append('    }')
-        out.append('')
-
-    if coils:
-        out.append('    // Write coil values to digital output pins')
-        out.append('    for (uint8_t i = 0; i < COIL_COUNT; i++) {')
-        out.append('        digitalWrite(COIL_PINS[i], mb.Coil(COIL_REGS[i]));')
-        out.append('    }')
-        out.append('')
+    # ---- Per-type update functions ----------------------------------------
+    # One function per register type, called from loop(). These start out as
+    # simple I/O loops; users can extend them with custom logic later.
 
     if dis_inputs:
-        out.append('    // Read digital input pins into discrete input registers')
+        out.append('// Read digital input pins into discrete-input registers.')
+        out.append('void updateDiscreteInputs() {')
         out.append('    for (uint8_t i = 0; i < DI_COUNT; i++) {')
         out.append('        mb.Ists(DI_REGS[i], digitalRead(DI_PINS[i]));')
         out.append('    }')
+        out.append('}')
         out.append('')
 
     if inp_regs:
-        out.append('    // Read analog input pins into input registers')
+        out.append('// Sample analog input pins into input registers.')
+        out.append('void updateInputRegisters() {')
         out.append('    for (uint8_t i = 0; i < AI_COUNT; i++) {')
         out.append('        mb.Ireg(AI_REGS[i], analogRead(AI_PINS[i]));')
         out.append('    }')
+        out.append('}')
         out.append('')
 
     if hold_regs:
-        out.append('    // Write holding register values to PWM output pins')
-        out.append('    // Holding registers are 16-bit (0-65535); map to 8-bit PWM (0-255)')
+        out.append('// Validate holding-register writes (revert + set invalid flag if out of range),')
+        out.append('// then push the current value to the PWM output pin.')
+        out.append('// Holding registers are 16-bit (0-65535); map to 8-bit PWM (0-255).')
+        out.append('void updateHoldingRegisters() {')
         out.append('    for (uint8_t i = 0; i < AO_COUNT; i++) {')
+        out.append('        uint16_t val = mb.Hreg(AO_REGS[i]);')
+        out.append('        if (val < AO_MIN[i] || val > AO_MAX[i]) {')
+        out.append('            mb.Hreg(AO_REGS[i], aoLastValid[i]);')
+        out.append('            mb.Coil(51, true);  // Register Value Invalid Flag')
+        out.append('        } else {')
+        out.append('            aoLastValid[i] = val;')
+        out.append('        }')
         out.append('        analogWrite(AO_PINS[i], map(mb.Hreg(AO_REGS[i]), 0, 65535, 0, 255));')
         out.append('    }')
+        out.append('}')
         out.append('')
 
+    if gen_regs:
+        out.append('// Validate general-purpose register writes; revert + set invalid flag if out of range.')
+        out.append('void updateGenRegs() {')
+        out.append('    for (uint8_t i = 0; i < GENREG_COUNT; i++) {')
+        out.append('        uint16_t val = mb.Hreg(GENREG_REGS[i]);')
+        out.append('        if (val < GENREG_MIN[i] || val > GENREG_MAX[i]) {')
+        out.append('            mb.Hreg(GENREG_REGS[i], genRegLastValid[i]);')
+        out.append('            mb.Coil(51, true);  // Register Value Invalid Flag')
+        out.append('        } else {')
+        out.append('            genRegLastValid[i] = val;')
+        out.append('        }')
+        out.append('    }')
+        out.append('}')
+        out.append('')
+
+    if coils:
+        out.append('// Drive digital output pins from coil register state.')
+        out.append('void updateCoils() {')
+        out.append('    for (uint8_t i = 0; i < COIL_COUNT; i++) {')
+        out.append('        digitalWrite(COIL_PINS[i], mb.Coil(COIL_REGS[i]));')
+        out.append('    }')
+        out.append('}')
+        out.append('')
+
+    if gen_flags:
+        out.append('// General-purpose flags have no default per-tick behavior.')
+        out.append('// Add custom logic here as needed.')
+        out.append('void updateGenFlags() {')
+        out.append('}')
+        out.append('')
+
+    # ---- loop() ------------------------------------------------------------
+    out.append('void loop() {')
+    out.append('    mb.task();  // handle incoming MODBUS requests')
+    if dis_inputs: out.append('    updateDiscreteInputs();')
+    if inp_regs:   out.append('    updateInputRegisters();')
+    if hold_regs:  out.append('    updateHoldingRegisters();')
+    if gen_regs:   out.append('    updateGenRegs();')
+    if coils:      out.append('    updateCoils();')
+    if gen_flags:  out.append('    updateGenFlags();')
     out.append('}')
     out.append('')
 
