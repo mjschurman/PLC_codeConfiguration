@@ -1,7 +1,7 @@
 // Auto-generated PLC source file
 // Title  : Arduino PLC Configuration Example
 // Version: 1.0
-// Target : arduino mega 2560
+// Target : Controllino Mega
 
 #include <Arduino.h>
 #include "plc_config.h"
@@ -11,16 +11,16 @@ byte     mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 IPAddress ip(10, 1, 10, 101);
 
 // Coil pins (Digital Outputs)
-const int COIL_PINS[] = { 2, 3, 4, 5, 6, 7, 8 };
+const int COIL_PINS[] = { CONTROLLINO_D0, CONTROLLINO_D1, CONTROLLINO_D2, CONTROLLINO_D3, CONTROLLINO_D4, CONTROLLINO_D5, CONTROLLINO_D6 };
 
 // Discrete input pins (Digital Inputs)
-const int DI_PINS[] = { 22, 23, 24, 25, 26, 27, 28 };
+const int DI_PINS[] = { CONTROLLINO_IN1, CONTROLLINO_IN0, CONTROLLINO_I18, CONTROLLINO_I17, CONTROLLINO_I16, CONTROLLINO_A15, CONTROLLINO_A14 };
 
 // Input register pins (Analog Inputs)
-const int AI_PINS[] = { A0, A1, A2, A3, A4, A5, A6 };
+const int AI_PINS[] = { CONTROLLINO_A0, CONTROLLINO_A1, CONTROLLINO_A2, CONTROLLINO_A3, CONTROLLINO_A4, CONTROLLINO_A5, CONTROLLINO_A6 };
 
 // Holding register pins and validation ranges (Analog Outputs / PWM)
-const int      AO_PINS[]      = { 9, 10, 11, 12, 13 };
+const int      AO_PINS[]      = { CONTROLLINO_D7, CONTROLLINO_D8, CONTROLLINO_D9, CONTROLLINO_D10, CONTROLLINO_D11 };
 const uint16_t AO_MIN[]       = { 0, 0, 0, 0, 0 };
 const uint16_t AO_MAX[]       = { 255, 255, 255, 255, 255 };
 uint16_t       aoLastValid[]  = { 0, 0, 0, 0, 0 };

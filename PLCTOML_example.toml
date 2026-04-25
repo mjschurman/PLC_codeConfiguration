@@ -1,7 +1,7 @@
 # This is an example of a TOML configuration file for a arduino baesed PLC using MODBUS
 title = "Arduino PLC Configuration Example"
 version = "1.0"
-target = "arduino mega 2560" # specify the target PLC model
+target = "Controllino Mega" # specify the target PLC model
 
 [modbus]
 type = "IP" # options are IP or Serial
@@ -12,41 +12,41 @@ slave_id = 1    # The slave ID of the PLC, used for addressing in MODBUS communi
 [registers]
 
 coils = [
-    {register = 1, pin = "2", description = "DO1"},
-    {register = 2, pin = "3", description = "DO2"},
-    {register = 3, pin = "4", description = "DO3"},
-    {register = 4, pin = "5", description = "DO4"},
-    {register = 5, pin = "6", description = "DO5"},
-    {register = 6, pin = "7", description = "DO6"},
-    {register = 7, pin = "8", description = "DO7"},
+    {register = 1, pin = "CONTROLLINO_D0", description = "DO1"},
+    {register = 2, pin = "CONTROLLINO_D1", description = "DO2"},
+    {register = 3, pin = "CONTROLLINO_D2", description = "DO3"},
+    {register = 4, pin = "CONTROLLINO_D3", description = "DO4"},
+    {register = 5, pin = "CONTROLLINO_D4", description = "DO5"},
+    {register = 6, pin = "CONTROLLINO_D5", description = "DO6"},
+    {register = 7, pin = "CONTROLLINO_D6", description = "DO7"},
 ]
 
 discrete_inputs = [
-    {register = 101, pin = "22", description = "DI1"},
-    {register = 102, pin = "23", description = "DI2"},
-    {register = 103, pin = "24", description = "DI3"},
-    {register = 104, pin = "25", description = "DI4"},
-    {register = 105, pin = "26", description = "DI5"},
-    {register = 106, pin = "27", description = "DI6"},
-    {register = 107, pin = "28", description = "DI7"},
+    {register = 101, pin = "CONTROLLINO_IN1", description = "DI1"},
+    {register = 102, pin = "CONTROLLINO_IN0", description = "DI2"},
+    {register = 103, pin = "CONTROLLINO_I18", description = "DI3"},
+    {register = 104, pin = "CONTROLLINO_I17", description = "DI4"},
+    {register = 105, pin = "CONTROLLINO_I16", description = "DI5"},
+    {register = 106, pin = "CONTROLLINO_A15", description = "DI6"},
+    {register = 107, pin = "CONTROLLINO_A14", description = "DI7"},
 ]
 
 input_registers = [
-    {register = 201, pin = "A0", description = "AI1"},
-    {register = 202, pin = "A1", description = "AI2"},
-    {register = 203, pin = "A2", description = "AI3"},
-    {register = 204, pin = "A3", description = "AI4"},
-    {register = 205, pin = "A4", description = "AI5"},
-    {register = 206, pin = "A5", description = "AI6"},
-    {register = 207, pin = "A6", description = "AI7"},
+    {register = 201, pin = "CONTROLLINO_A0", description = "AI1"},
+    {register = 202, pin = "CONTROLLINO_A1", description = "AI2"},
+    {register = 203, pin = "CONTROLLINO_A2", description = "AI3"},
+    {register = 204, pin = "CONTROLLINO_A3", description = "AI4"},
+    {register = 205, pin = "CONTROLLINO_A4", description = "AI5"},
+    {register = 206, pin = "CONTROLLINO_A5", description = "AI6"},
+    {register = 207, pin = "CONTROLLINO_A6", description = "AI7"},
 ]
 
 holding_registers = [
-    {register = 301, pin = "9",  description = "AO1", range = [0, 255]},
-    {register = 302, pin = "10", description = "AO2", range = [0, 255]},
-    {register = 303, pin = "11", description = "AO3", range = [0, 255]},
-    {register = 304, pin = "12", description = "AO4", range = [0, 255]},
-    {register = 305, pin = "13", description = "AO5", range = [0, 255]},
+    {register = 301, pin = "CONTROLLINO_D7",  description = "AO1", range = [0, 255]},
+    {register = 302, pin = "CONTROLLINO_D8", description = "AO2", range = [0, 255]},
+    {register = 303, pin = "CONTROLLINO_D9", description = "AO3", range = [0, 255]},
+    {register = 304, pin = "CONTROLLINO_D10", description = "AO4", range = [0, 255]},
+    {register = 305, pin = "CONTROLLINO_D11", description = "AO5", range = [0, 255]},
 ]
 
 genRegs = [

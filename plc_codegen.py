@@ -34,6 +34,25 @@ def parse_pin(pin_str: str) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Target-specific includes
+# ---------------------------------------------------------------------------
+
+# Map a substring of the TOML 'target' field (case-insensitive) to a list of
+# extra C++ headers required so that target's pin-name macros resolve.
+TARGET_INCLUDE_MAP: dict[str, list[str]] = {
+    'controllino': ['Controllino.h'],
+}
+
+
+def target_specific_includes(target: str) -> list[str]:
+    t = target.lower()
+    for key, includes in TARGET_INCLUDE_MAP.items():
+        if key in t:
+            return includes
+    return []
+
+
+# ---------------------------------------------------------------------------
 # Validation
 # ---------------------------------------------------------------------------
 
@@ -167,6 +186,13 @@ def generate_header(config: dict) -> str:
     out.append('// Register Map')
     out.extend(generate_register_table(registers))
     out.append('')
+
+    # Target-specific header (provides board-specific pin macros, e.g. CONTROLLINO_*).
+    target_includes = target_specific_includes(config['target'])
+    for inc in target_includes:
+        out.append(f'#include <{inc}>')
+    if target_includes:
+        out.append('')
 
     if modbus['type'] == 'IP':
         out.append('#include <Ethernet.h>')

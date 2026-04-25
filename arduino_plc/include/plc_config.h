@@ -3,49 +3,51 @@
 // Auto-generated PLC configuration header
 // Title  : Arduino PLC Configuration Example
 // Version: 1.0
-// Target : arduino mega 2560
+// Target : Controllino Mega
 
 // Register Map
-// +----------+------------------+-----+-----------------------------+----------+
-// | Register | Type             | Pin | Description                 | Range    |
-// +----------+------------------+-----+-----------------------------+----------+
-// | 1        | Coil (DO)        | 2   | DO1                         | -        |
-// | 2        | Coil (DO)        | 3   | DO2                         | -        |
-// | 3        | Coil (DO)        | 4   | DO3                         | -        |
-// | 4        | Coil (DO)        | 5   | DO4                         | -        |
-// | 5        | Coil (DO)        | 6   | DO5                         | -        |
-// | 6        | Coil (DO)        | 7   | DO6                         | -        |
-// | 7        | Coil (DO)        | 8   | DO7                         | -        |
-// | 50       | General Flag     | -   | System Fault Flag           | -        |
-// | 51       | General Flag     | -   | Invalid Register Value Flag | -        |
-// | 52       | General Flag     | -   | General Purpose Flag 3      | -        |
-// | 53       | General Flag     | -   | General Purpose Flag 4      | -        |
-// | 54       | General Flag     | -   | General Purpose Flag 5      | -        |
-// | 101      | Discrete In (DI) | 22  | DI1                         | -        |
-// | 102      | Discrete In (DI) | 23  | DI2                         | -        |
-// | 103      | Discrete In (DI) | 24  | DI3                         | -        |
-// | 104      | Discrete In (DI) | 25  | DI4                         | -        |
-// | 105      | Discrete In (DI) | 26  | DI5                         | -        |
-// | 106      | Discrete In (DI) | 27  | DI6                         | -        |
-// | 107      | Discrete In (DI) | 28  | DI7                         | -        |
-// | 201      | Input Reg (AI)   | A0  | AI1                         | -        |
-// | 202      | Input Reg (AI)   | A1  | AI2                         | -        |
-// | 203      | Input Reg (AI)   | A2  | AI3                         | -        |
-// | 204      | Input Reg (AI)   | A3  | AI4                         | -        |
-// | 205      | Input Reg (AI)   | A4  | AI5                         | -        |
-// | 206      | Input Reg (AI)   | A5  | AI6                         | -        |
-// | 207      | Input Reg (AI)   | A6  | AI7                         | -        |
-// | 301      | Holding Reg (AO) | 9   | AO1                         | [0, 255] |
-// | 302      | Holding Reg (AO) | 10  | AO2                         | [0, 255] |
-// | 303      | Holding Reg (AO) | 11  | AO3                         | [0, 255] |
-// | 304      | Holding Reg (AO) | 12  | AO4                         | [0, 255] |
-// | 305      | Holding Reg (AO) | 13  | AO5                         | [0, 255] |
-// | 350      | General Reg      | -   | General Purpose Register 1  | [0, 100] |
-// | 351      | General Reg      | -   | General Purpose Register 2  | [0, 100] |
-// | 352      | General Reg      | -   | General Purpose Register 3  | [0, 100] |
-// | 353      | General Reg      | -   | General Purpose Register 4  | [0, 100] |
-// | 354      | General Reg      | -   | General Purpose Register 5  | [0, 100] |
-// +----------+------------------+-----+-----------------------------+----------+
+// +----------+------------------+-----------------+-----------------------------+----------+
+// | Register | Type             | Pin             | Description                 | Range    |
+// +----------+------------------+-----------------+-----------------------------+----------+
+// | 1        | Coil (DO)        | CONTROLLINO_D0  | DO1                         | -        |
+// | 2        | Coil (DO)        | CONTROLLINO_D1  | DO2                         | -        |
+// | 3        | Coil (DO)        | CONTROLLINO_D2  | DO3                         | -        |
+// | 4        | Coil (DO)        | CONTROLLINO_D3  | DO4                         | -        |
+// | 5        | Coil (DO)        | CONTROLLINO_D4  | DO5                         | -        |
+// | 6        | Coil (DO)        | CONTROLLINO_D5  | DO6                         | -        |
+// | 7        | Coil (DO)        | CONTROLLINO_D6  | DO7                         | -        |
+// | 50       | General Flag     | -               | System Fault Flag           | -        |
+// | 51       | General Flag     | -               | Invalid Register Value Flag | -        |
+// | 52       | General Flag     | -               | General Purpose Flag 3      | -        |
+// | 53       | General Flag     | -               | General Purpose Flag 4      | -        |
+// | 54       | General Flag     | -               | General Purpose Flag 5      | -        |
+// | 101      | Discrete In (DI) | CONTROLLINO_IN1 | DI1                         | -        |
+// | 102      | Discrete In (DI) | CONTROLLINO_IN0 | DI2                         | -        |
+// | 103      | Discrete In (DI) | CONTROLLINO_I18 | DI3                         | -        |
+// | 104      | Discrete In (DI) | CONTROLLINO_I17 | DI4                         | -        |
+// | 105      | Discrete In (DI) | CONTROLLINO_I16 | DI5                         | -        |
+// | 106      | Discrete In (DI) | CONTROLLINO_A15 | DI6                         | -        |
+// | 107      | Discrete In (DI) | CONTROLLINO_A14 | DI7                         | -        |
+// | 201      | Input Reg (AI)   | CONTROLLINO_A0  | AI1                         | -        |
+// | 202      | Input Reg (AI)   | CONTROLLINO_A1  | AI2                         | -        |
+// | 203      | Input Reg (AI)   | CONTROLLINO_A2  | AI3                         | -        |
+// | 204      | Input Reg (AI)   | CONTROLLINO_A3  | AI4                         | -        |
+// | 205      | Input Reg (AI)   | CONTROLLINO_A4  | AI5                         | -        |
+// | 206      | Input Reg (AI)   | CONTROLLINO_A5  | AI6                         | -        |
+// | 207      | Input Reg (AI)   | CONTROLLINO_A6  | AI7                         | -        |
+// | 301      | Holding Reg (AO) | CONTROLLINO_D7  | AO1                         | [0, 255] |
+// | 302      | Holding Reg (AO) | CONTROLLINO_D8  | AO2                         | [0, 255] |
+// | 303      | Holding Reg (AO) | CONTROLLINO_D9  | AO3                         | [0, 255] |
+// | 304      | Holding Reg (AO) | CONTROLLINO_D10 | AO4                         | [0, 255] |
+// | 305      | Holding Reg (AO) | CONTROLLINO_D11 | AO5                         | [0, 255] |
+// | 350      | General Reg      | -               | General Purpose Register 1  | [0, 100] |
+// | 351      | General Reg      | -               | General Purpose Register 2  | [0, 100] |
+// | 352      | General Reg      | -               | General Purpose Register 3  | [0, 100] |
+// | 353      | General Reg      | -               | General Purpose Register 4  | [0, 100] |
+// | 354      | General Reg      | -               | General Purpose Register 5  | [0, 100] |
+// +----------+------------------+-----------------+-----------------------------+----------+
+
+#include <Controllino.h>
 
 #include <Ethernet.h>
 #include <ModbusEthernet.h>
