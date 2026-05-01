@@ -55,11 +55,18 @@ py plc_codegen.py PLCTOML_example.toml \
 
 Top-level fields:
 
-| Field     | Type    | Meaning                                       |
-|-----------|---------|-----------------------------------------------|
-| `title`   | string  | Free-text title, copied into both files.      |
-| `version` | string  | Free-text version, copied into both files.    |
-| `target`  | string  | Free-text board description (e.g. `arduino mega 2560`). |
+| Field     | Type    | Meaning                                    |
+|-----------|---------|--------------------------------------------|
+| `title`   | string  | Free-text title, copied into both files.   |
+| `version` | string  | Free-text version, copied into both files. |
+| `target`  | string  | Free-text board description — see below.   |
+
+The `target` value is matched case-insensitively as a substring against `TARGET_INCLUDE_MAP` in `plc_codegen.py` to decide whether to emit a board-specific include in the generated header. Recognised today:
+
+- `controllino` — adds `#include <Controllino.h>` so `CONTROLLINO_*` pin macros resolve.
+- `uno` — no extra include; pin numbers and `A0`–`A5` come from `<Arduino.h>` alone.
+
+Anything else falls through with no extra include, which is fine as long as your TOML uses pin names that resolve from the stock Arduino core or from a header you've added to your build elsewhere.
 
 `[modbus]` block:
 
