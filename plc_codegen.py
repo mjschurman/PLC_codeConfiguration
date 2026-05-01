@@ -38,9 +38,13 @@ def parse_pin(pin_str: str) -> str:
 # ---------------------------------------------------------------------------
 
 # Map a substring of the TOML 'target' field (case-insensitive) to a list of
-# extra C++ headers required so that target's pin-name macros resolve.
+# extra C++ headers required so that target's pin-name macros resolve. An
+# empty list means "stock Arduino core is sufficient" — i.e. pin numbers and
+# A0..An come from <Arduino.h>, which main.cpp already includes.
+# More-specific keys must come before more-general ones (first match wins).
 TARGET_INCLUDE_MAP: dict[str, list[str]] = {
     'controllino': ['Controllino.h'],
+    'uno':         [],
 }
 
 
