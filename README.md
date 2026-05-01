@@ -27,7 +27,7 @@ generated_output/             Older snapshot of generated files (reference only)
 
 1. **Parse** the TOML file with the standard library `tomllib` (Python 3.11+).
 2. **Validate** the contents — see [Validation rules](#validation-rules) below. Any problem produces a single descriptive `ValueError` and a non-zero exit.
-3. **Generate `plc_config.h`** — a register-map comment table plus, for each register section, a `const int <PREFIX>_REGS[]` array of MODBUS addresses and a matching `const uint8_t <PREFIX>_COUNT`. Includes the right MODBUS library header (`ModbusEthernet` for IP, `ModbusSerial` for serial) and exposes the `extern` MODBUS object.
+3. **Generate `plc_config.h`** — a register-map comment table plus, for each register section, a `const int <PREFIX>_REGS[]` array of MODBUS addresses and a matching `const uint8_t <PREFIX>_COUNT`. Includes the right MODBUS library header (`ModbusEthernet` for IP, `ModbusRTU` for serial) and exposes the `extern` MODBUS object.
 4. **Generate `main.cpp`** — the MODBUS object instance, parallel pin / range / "last valid" arrays, plus `setup()` and `loop()` driven entirely by index loops over the arrays from the header.
 
 ### Usage

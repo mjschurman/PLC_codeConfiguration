@@ -201,9 +201,9 @@ def generate_header(config: dict) -> str:
         out.append('extern ModbusEthernet mb;')
     else:
         out.append('#include <Modbus.h>')
-        out.append('#include <ModbusSerial.h>')
+        out.append('#include <ModbusRTU.h>')
         out.append('')
-        out.append('extern ModbusSerial mb;')
+        out.append('extern ModbusRTU mb;')
 
     out.append('')
     out.append(f'#define SLAVE_ID {modbus["slave_id"]}')
@@ -263,7 +263,7 @@ def generate_cpp(config: dict) -> str:
         out.append(f'byte     mac[] = {{ 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED }};')
         out.append(f'IPAddress ip({", ".join(ip_parts)});')
     else:
-        out.append('ModbusSerial mb;')
+        out.append('ModbusRTU mb;')
 
     out.append('')
 
@@ -320,7 +320,8 @@ def generate_cpp(config: dict) -> str:
     else:
         baud = modbus.get('baud', 9600)
         out.append(f'    Serial.begin({baud});')
-        out.append('    mb.begin(&Serial, SLAVE_ID);')
+        out.append('    mb.begin(&Serial);')
+        out.append('    mb.slave(SLAVE_ID);')
 
     out.append('')
 
